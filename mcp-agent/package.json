@@ -1,0 +1,52 @@
+{
+  "name": "hackstrike-mcp-agent",
+  "version": "1.0.0",
+  "description": "AI-powered bug bounty agent using Claude and MCP",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "hackstrike-agent": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/cli-hunter.js",
+    "hunt": "node dist/cli-hunter.js",
+    "s3": "node dist/s3-hunter.js",
+    "s3:js": "node dist/s3-hunter.js --js",
+    "s3:domain": "node dist/s3-hunter.js --domain",
+    "start:simple": "node dist/cli-auto.js",
+    "start:claude": "node dist/cli.js",
+    "dev": "tsx src/cli-hunter.ts",
+    "server": "node dist/server.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.30.0",
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "conf": "^13.0.0",
+    "dotenv": "^16.4.5",
+    "inquirer": "^10.2.0",
+    "ora": "^8.1.0",
+    "readline": "^1.3.0"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^9.0.7",
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "bug-bounty",
+    "security",
+    "penetration-testing",
+    "mcp",
+    "claude",
+    "ai-agent"
+  ],
+  "author": "HackTools",
+  "license": "MIT"
+}

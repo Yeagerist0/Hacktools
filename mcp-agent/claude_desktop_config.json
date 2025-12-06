@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "hackstrike": {
+      "command": "node",
+      "args": ["/home/hitarth/HackTools/mcp-agent/dist/server.js"],
+      "env": {
+        "HACKTOOLS_DIR": "/home/hitarth/HackTools",
+        "WORDLIST_DIR": "/usr/share/seclists"
+      }
+    }
+  }
+}

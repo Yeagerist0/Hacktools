@@ -1,0 +1,183 @@
+#!/bin/bash
+
+#====================================================================
+#  HACKSTRIKE AI - Natural Language Bug Bounty Scanner
+#====================================================================
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+WHITE='\033[1;37m'
+GRAY='\033[0;90m'
+NC='\033[0m'
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TARGET=""
+
+banner() {
+    clear
+    echo -e "${PURPLE}"
+    cat << "EOF"
+  ██╗  ██╗ █████╗  ██████╗██╗  ██╗███████╗████████╗██████╗ ██╗██╗  ██╗███████╗
+  ██║  ██║██╔══██╗██╔════╝██║ ██╔╝██╔════╝╚══██╔══╝██╔══██╗██║██║ ██╔╝██╔════╝
+  ███████║███████║██║     █████╔╝ ███████╗   ██║   ██████╔╝██║█████╔╝ █████╗  
+  ██╔══██║██╔══██║██║     ██╔═██╗ ╚════██║   ██║   ██╔══██╗██║██╔═██╗ ██╔══╝  
+  ██║  ██║██║  ██║╚██████╗██║  ██╗███████║   ██║   ██║  ██║██║██║  ██╗███████╗
+  ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝╚═╝  ╚═╝╚══════╝
+EOF
+    echo -e "${NC}"
+    echo -e "${CYAN}              ◆ AI-Powered Bug Bounty Scanner ◆${NC}"
+    echo ""
+}
+
+ai_say() {
+    echo -e "${GREEN}🤖 HackStrike:${NC} $1"
+}
+
+show_help() {
+    echo ""
+    echo -e "${WHITE}What can I do for you?${NC}"
+    echo ""
+    echo -e "  ${CYAN}• Set target${NC}     - \"scan airbnb.com\" or \"target google.com\""
+    echo -e "  ${CYAN}• Full scan${NC}      - \"full scan\" or \"hack it\" or \"find bugs\""
+    echo -e "  ${CYAN}• Recon${NC}          - \"recon\" or \"find subdomains\""
+    echo -e "  ${CYAN}• Vulns${NC}          - \"find vulnerabilities\" or \"nuclei scan\""
+    echo -e "  ${CYAN}• XSS${NC}            - \"find xss\" or \"test xss\""
+    echo -e "  ${CYAN}• SQLi${NC}           - \"find sql injection\" or \"test sqli\""
+    echo -e "  ${CYAN}• Ports${NC}          - \"scan ports\" or \"port scan\""
+    echo -e "  ${CYAN}• Secrets${NC}        - \"find secrets\" or \"hunt leaks\""
+    echo -e "  ${CYAN}• Results${NC}        - \"show results\" or \"report\""
+    echo -e "  ${CYAN}• Exit${NC}           - \"exit\" or \"quit\" or \"bye\""
+    echo ""
+}
+
+extract_domain() {
+    local text="$1"
+    # Extract domain-like pattern
+    echo "$text" | grep -oE '[a-zA-Z0-9][-a-zA-Z0-9]*\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})?' | head -1
+}
+
+run_hackstrike() {
+    local mode="$1"
+    if [[ -z "$TARGET" ]]; then
+        ai_say "I need a target first! Try: ${CYAN}scan example.com${NC}"
+        return
+    fi
+    ai_say "Starting $mode on ${CYAN}$TARGET${NC}..."
+    echo ""
+    "$SCRIPT_DIR/hackstrike" "$TARGET" $mode
+}
+
+process_input() {
+    local input="$1"
+    local lower=$(echo "$input" | tr '[:upper:]' '[:lower:]')
+    
+    # Check for domain in input first
+    local domain=$(extract_domain "$input")
+    if [[ -n "$domain" ]]; then
+        TARGET="$domain"
+        ai_say "Target set to: ${CYAN}$TARGET${NC}"
+    fi
+    
+    # Determine action
+    case "$lower" in
+        *exit*|*quit*|*bye*|*q)
+            ai_say "Happy hunting! 🎯"
+            exit 0
+            ;;
+        *help*|*"what can"*|*commands*)
+            show_help
+            ;;
+        *full*scan*|*hack*it*|*scan*everything*|*find*bug*|*attack*)
+            run_hackstrike "--full"
+            ;;
+        *recon*|*subdomain*|*enumerate*)
+            run_hackstrike "--recon"
+            ;;
+        *vuln*|*nuclei*|*cve*)
+            run_hackstrike "--vulns"
+            ;;
+        *xss*|*cross*site*)
+            run_hackstrike "--xss"
+            ;;
+        *sql*|*sqli*|*injection*)
+            run_hackstrike "--sqli"
+            ;;
+        *port*|*nmap*|*naabu*)
+            run_hackstrike "--ports"
+            ;;
+        *secret*|*leak*|*exposed*|*.git*|*.env*)
+            if [[ -n "$TARGET" ]]; then
+                ai_say "Hunting for secrets on ${CYAN}$TARGET${NC}..."
+                curl -sk --max-time 5 "https://$TARGET/.git/HEAD" 2>/dev/null | grep -q 'ref:' && \
+                    echo -e "${RED}[!] .git exposed!${NC}"
+                curl -sk --max-time 5 "https://$TARGET/.env" 2>/dev/null | grep -qiE '(DB_|APP_|API_)' && \
+                    echo -e "${RED}[!] .env exposed!${NC}"
+            else
+                ai_say "Set a target first!"
+            fi
+            ;;
+        *result*|*report*|*show*|*what*found*)
+            if [[ -d "$SCRIPT_DIR/results" ]]; then
+                local latest=$(ls -td "$SCRIPT_DIR/results"/*/ 2>/dev/null | head -1)
+                if [[ -n "$latest" ]]; then
+                    ai_say "Latest scan: ${CYAN}$latest${NC}"
+                    [[ -f "$latest/reports/report.md" ]] && cat "$latest/reports/report.md"
+                fi
+            else
+                ai_say "No results yet. Run a scan first!"
+            fi
+            ;;
+        *target*|*scan*|*set*)
+            if [[ -n "$domain" ]]; then
+                # Target already set above
+                :
+            elif [[ -n "$TARGET" ]]; then
+                ai_say "Current target: ${CYAN}$TARGET${NC}"
+            else
+                ai_say "Provide a target! Example: ${CYAN}scan example.com${NC}"
+            fi
+            ;;
+        *status*|*current*)
+            if [[ -n "$TARGET" ]]; then
+                ai_say "Current target: ${CYAN}$TARGET${NC}"
+            else
+                ai_say "No target set."
+            fi
+            ;;
+        *)
+            if [[ -n "$domain" && -z "$(echo "$lower" | grep -E 'target|scan|set')" ]]; then
+                # If they just typed a domain with an action word, do full scan
+                if echo "$lower" | grep -qE 'full|hack|attack|bug|pentest'; then
+                    run_hackstrike "--full"
+                fi
+            else
+                ai_say "I didn't understand that. Type ${CYAN}help${NC} for commands."
+            fi
+            ;;
+    esac
+}
+
+main() {
+    banner
+    
+    ai_say "Welcome! I'm your AI bug bounty assistant."
+    ai_say "Tell me what you want to scan. Type ${CYAN}help${NC} for commands."
+    echo ""
+    
+    while true; do
+        echo -ne "${PURPLE}hackstrike>${NC} "
+        read -r input
+        
+        [[ -z "$input" ]] && continue
+        
+        process_input "$input"
+        echo ""
+    done
+}
+
+main

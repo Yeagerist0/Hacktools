@@ -1,0 +1,104 @@
+version: '3.8'
+
+# Bug Bounty Practice Lab - Docker Compose
+# Start: docker-compose up -d
+# Stop: docker-compose down
+
+services:
+  # DVWA - Damn Vulnerable Web Application
+  dvwa:
+    image: vulnerables/web-dvwa
+    container_name: dvwa
+    ports:
+      - "8081:80"
+    restart: unless-stopped
+    networks:
+      - hacklab
+
+  # OWASP Juice Shop
+  juiceshop:
+    image: bkimminich/juice-shop
+    container_name: juiceshop
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    networks:
+      - hacklab
+
+  # WebGoat
+  webgoat:
+    image: webgoat/webgoat
+    container_name: webgoat
+    ports:
+      - "8080:8080"
+      - "9090:9090"
+    restart: unless-stopped
+    networks:
+      - hacklab
+
+  # bWAPP
+  bwapp:
+    image: raesene/bwapp
+    container_name: bwapp
+    ports:
+      - "8082:80"
+    restart: unless-stopped
+    networks:
+      - hacklab
+
+  # Mutillidae II
+  mutillidae:
+    image: citizenstig/nowasp
+    container_name: mutillidae
+    ports:
+      - "8083:80"
+    restart: unless-stopped
+    networks:
+      - hacklab
+
+  # NodeGoat - OWASP Node.js Vulnerable App
+  nodegoat:
+    image: owasp/nodegoat
+    container_name: nodegoat
+    ports:
+      - "4000:4000"
+    restart: unless-stopped
+    networks:
+      - hacklab
+
+  # Hackazon - Modern vulnerable e-commerce app
+  hackazon:
+    image: ianwijaya/hackazon
+    container_name: hackazon
+    ports:
+      - "8084:80"
+    restart: unless-stopped
+    networks:
+      - hacklab
+
+  # VulnHub XVWA
+  xvwa:
+    image: tuxotron/xvwa
+    container_name: xvwa
+    ports:
+      - "8085:80"
+    restart: unless-stopped
+    networks:
+      - hacklab
+
+networks:
+  hacklab:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# Access URLs:
+# DVWA:       http://localhost:8081 (admin/password)
+# Juice Shop: http://localhost:3000
+# WebGoat:    http://localhost:8080/WebGoat
+# bWAPP:      http://localhost:8082/bWAPP (install first at /install.php)
+# Mutillidae: http://localhost:8083/mutillidae
+# NodeGoat:   http://localhost:4000
+# Hackazon:   http://localhost:8084
+# XVWA:       http://localhost:8085/xvwa
