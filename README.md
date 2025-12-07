@@ -5,7 +5,7 @@ A comprehensive collection of tools, scripts, and resources for ethical bug boun
 ```
  ____              ____                   _         _____           _ _    _ _   
 | __ ) _   _  __ _| __ )  ___  _   _ _ __ | |_ _   _|_   _|__   ___ | | | _(_) |_ 
-|  _ \| | | |/ _` |  _ \ / _ \| | | | '_ \| __| | | | | |/ _ \ / _ \| | |/ / | __|
+|  _ \| | | |/ _\` |  _ \ / _ \| | | | '_ \| __| | | | | |/ _ \ / _ \| | |/ / | __|
 | |_) | |_| | (_| | |_) | (_) | |_| | | | | |_| |_| | | | (_) | (_) | |   <| | |_ 
 |____/ \__,_|\__, |____/ \___/ \__,_|_| |_|\__|\__, | |_|\___/ \___/|_|_|\_\_|\__|
              |___/                             |___/                              
@@ -13,7 +13,7 @@ A comprehensive collection of tools, scripts, and resources for ethical bug boun
 
 ---
 
-## ⚠️ Disclaimer
+## ?????? Disclaimer
 
 **This toolkit is for ETHICAL, LEGAL security testing only.**
 
@@ -26,219 +26,216 @@ Unauthorized access to computer systems is illegal. The authors are not responsi
 
 ---
 
-## 📁 Directory Structure
+## ???? Quick Start
 
-```
-HackTools/
-├── install-tools.sh          # Master installation script
-├── scripts/
-│   ├── recon/
-│   │   ├── subdomain-enum.sh # Subdomain enumeration
-│   │   ├── full-recon.sh     # Complete recon automation
-│   │   └── url-collector.sh  # URL collection
-│   ├── scanning/
-│   │   ├── port-scan.sh      # Port scanning
-│   │   └── nuclei-scan.sh    # Vulnerability scanning
-│   ├── web-testing/
-│   │   ├── web-fuzz.sh       # Directory/file fuzzing
-│   │   ├── xss-test.sh       # XSS testing
-│   │   └── sqli-test.sh      # SQL injection testing
-│   └── osint/
-│       └── osint.sh          # OSINT automation
-├── checklists/
-│   ├── bug-bounty-methodology.md
-│   ├── owasp-top10-checklist.md
-│   └── recon-methodology.md
-├── reports/
-│   ├── bug-report-template.md
-│   └── poc-template.md
-├── lab-setup/
-│   ├── lab-setup-guide.md
-│   └── docker-compose.yml
-├── wordlists/                # Downloaded wordlists
-├── output/                   # Scan results
-└── aliases.sh               # Shell aliases
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/yourusername/HackTools.git
+cd HackTools
 ```
 
----
-
-## 🚀 Quick Start
-
-### 1. Install Tools
+### 2. Install Dependencies
 
 ```bash
 # Make installer executable
-chmod +x install-tools.sh
+chmod +x install-tools.sh hackstrike hackstrike-ai auto-hunt.sh autoscan.sh
 
-# Run full installation
+# Run full installation (installs all security tools)
 ./install-tools.sh --full
 
-# Or run interactively
+# Or run interactively to choose specific tools
 ./install-tools.sh
 ```
 
-### 2. Set Up Aliases
+### 3. Setup MCP Agent (Optional - for AI-powered scanning)
 
 ```bash
-# Add to your shell config
-source ~/HackTools/aliases.sh
-
-# Or add permanently
-echo 'source ~/HackTools/aliases.sh' >> ~/.bashrc
-source ~/.bashrc
+cd mcp-agent
+npm install
+npm run build
+cd ..
 ```
 
-### 3. Run Your First Recon
+### 4. Run HackStrike
 
 ```bash
-# Make scripts executable
-chmod +x scripts/**/*.sh
+# Basic scan
+./hackstrike target.com
 
-# Run subdomain enumeration
-./scripts/recon/subdomain-enum.sh target.com
+# Recon only
+./hackstrike target.com --recon
 
-# Or run full recon
-./scripts/recon/full-recon.sh target.com
+# Interactive AI mode
+./hackstrike-ai
 ```
 
 ---
 
-## 🛠️ Available Scripts
+## ???? Main Tools
 
-### Reconnaissance
+### HackStrike - Automated Scanner
 
-| Script | Description | Usage |
-|--------|-------------|-------|
-| `subdomain-enum.sh` | Enumerate subdomains | `./subdomain-enum.sh domain.com` |
-| `full-recon.sh` | Complete recon pipeline | `./full-recon.sh domain.com` |
-| `url-collector.sh` | Collect URLs from sources | `./url-collector.sh domain.com` |
+```bash
+./hackstrike <target> [options]
 
-### Scanning
+Options:
+  -f, --full        Full scan (default)
+  -r, --recon       Recon only (subdomains + URLs)
+  -v, --vulns       Vulnerability scan only
+  -x, --xss         XSS testing only
+  -s, --sqli        SQLi testing only
+  -p, --ports       Port scan only
+  -t, --threads N   Number of threads (default: 50)
 
-| Script | Description | Usage |
-|--------|-------------|-------|
-| `port-scan.sh` | Port scanning with Nmap/RustScan | `./port-scan.sh target` |
-| `nuclei-scan.sh` | Vulnerability scanning | `./nuclei-scan.sh target.com quick` |
+Examples:
+  ./hackstrike example.com              # Full scan
+  ./hackstrike example.com --recon      # Recon only
+  ./hackstrike example.com --vulns      # Vuln scan only
+```
 
-### Web Testing
+### HackStrike AI - Interactive Mode
 
-| Script | Description | Usage |
-|--------|-------------|-------|
-| `web-fuzz.sh` | Directory/file fuzzing | `./web-fuzz.sh https://target.com` |
-| `xss-test.sh` | XSS vulnerability testing | `./xss-test.sh urls.txt` |
-| `sqli-test.sh` | SQL injection testing | `./sqli-test.sh url` |
+```bash
+./hackstrike-ai
 
-### OSINT
+Commands:
+  scan <domain>        Set target
+  full scan            Run complete scan
+  recon                Subdomain enumeration
+  find vulnerabilities Nuclei scan
+  find xss             XSS testing
+  find sqli            SQL injection testing
+  show results         View scan results
+  help                 Show all commands
+```
 
-| Script | Description | Usage |
-|--------|-------------|-------|
-| `osint.sh` | Open source intelligence | `./osint.sh target` |
+### Auto-Hunt - Continuous Monitoring
+
+```bash
+./auto-hunt.sh targets.txt [options]
+
+Options:
+  -i, --interval N    Scan interval in hours (default: 24)
+  -n, --notify        Enable notifications
+
+Examples:
+  ./auto-hunt.sh targets.txt              # Hunt with default settings
+  ./auto-hunt.sh targets.txt -i 12        # Scan every 12 hours
+  ./auto-hunt.sh targets.txt --notify     # With notifications
+```
+
+### AutoScan - Quick Scanner
+
+```bash
+./autoscan.sh <target> [scan-type]
+
+Scan Types:
+  quick     Quick recon (subdomains + live hosts)
+  web       Web vulnerability scan
+  ports     Port scan
+  all       Full scan (default)
+
+Examples:
+  ./autoscan.sh example.com           # Full scan
+  ./autoscan.sh example.com quick     # Quick recon
+```
 
 ---
 
-## 📋 Checklists
+## ???? Directory Structure
 
-- **Bug Bounty Methodology** - Complete workflow from recon to reporting
-- **OWASP Top 10** - Testing checklist for all OWASP categories
-- **Recon Methodology** - Detailed reconnaissance guide
+```
+HackTools/
+????????? hackstrike            # Main automated scanner
+????????? hackstrike-ai         # Interactive AI-powered scanner
+????????? hackstrike.sh         # Extended scanner with more features
+????????? auto-hunt.sh          # Continuous monitoring script
+????????? autoscan.sh           # Quick scanner wrapper
+????????? install-tools.sh      # Master installation script
+????????? mcp-agent/            # AI agent (requires npm install)
+????????? scripts/              # Individual tool scripts
+???   ????????? recon/            # Reconnaissance scripts
+???   ????????? scanning/         # Scanning scripts
+???   ????????? web-testing/      # Web testing scripts
+???   ????????? osint/            # OSINT scripts
+????????? checklists/           # Security testing checklists
+????????? reports/              # Report templates
+????????? lab-setup/            # Docker lab environments
+????????? wordlists/            # Wordlists (downloaded during install)
+????????? results/              # Scan results (gitignored)
+????????? output/               # Output files (gitignored)
+```
 
 ---
 
-## 📝 Report Templates
+## ??????? Post-Clone Setup
 
-- **Bug Report Template** - Professional vulnerability report format
-- **PoC Template** - Proof of concept documentation
+After cloning from GitHub, run these commands:
+
+```bash
+# 1. Make scripts executable
+chmod +x hackstrike hackstrike-ai hackstrike.sh auto-hunt.sh autoscan.sh install-tools.sh
+
+# 2. Install security tools
+./install-tools.sh --full
+
+# 3. (Optional) Setup MCP Agent for AI features
+cd mcp-agent
+npm install
+npm run build
+cd ..
+
+# 4. Reload shell to update PATH
+source ~/.bashrc   # or source ~/.zshrc
+```
 
 ---
 
-## 🧪 Lab Setup
+## ???? Required Tools
 
-Start practice environments with Docker:
+The `install-tools.sh` script installs these tools:
+
+| Category | Tools |
+|----------|-------|
+| **Recon** | subfinder, amass, assetfinder, httpx, waybackurls, gau, katana |
+| **Scanning** | nmap, naabu, nuclei, nikto |
+| **Web Testing** | ffuf, gobuster, dalfox, sqlmap, arjun |
+| **OSINT** | theHarvester, sherlock, recon-ng |
+
+---
+
+## ???? Lab Setup
+
+Practice with vulnerable applications:
 
 ```bash
 cd lab-setup
 docker-compose up -d
 ```
 
-Access vulnerable applications:
-- DVWA: http://localhost:8081
-- Juice Shop: http://localhost:3000
-- WebGoat: http://localhost:8080/WebGoat
-- bWAPP: http://localhost:8082/bWAPP
+| Application | URL |
+|-------------|-----|
+| DVWA | http://localhost:8081 |
+| Juice Shop | http://localhost:3000 |
+| WebGoat | http://localhost:8080/WebGoat |
+| bWAPP | http://localhost:8082/bWAPP |
 
 ---
 
-## 🔧 Tool Categories
+## ???? Resources
 
-### Reconnaissance
-- Subfinder, Amass, Assetfinder, Findomain
-- Httpx, Httprobe
-- Waybackurls, Gau, Katana
-- DNSx, MassDNS
-
-### Scanning
-- Nmap, Masscan, RustScan, Naabu
-- Nuclei, Nikto
-
-### Web Testing
-- Ffuf, Gobuster, Feroxbuster
-- SQLMap, Dalfox, XSStrike
-- Arjun, ParamSpider
-- Burp Suite (manual install required)
-
-### OSINT
-- theHarvester, Sherlock
-- Recon-ng, Photon
-
-### Enumeration
-- Enum4linux-ng, SMBMap
-- Kerbrute, Ldapdomaindump
-
----
-
-## 📚 Resources
-
-### Learning Platforms
-- [Hack The Box](https://hackthebox.com)
-- [TryHackMe](https://tryhackme.com)
-- [PortSwigger Web Security Academy](https://portswigger.net/web-security)
-- [PentesterLab](https://pentesterlab.com)
-
-### Documentation
 - [OWASP Testing Guide](https://owasp.org/www-project-web-security-testing-guide/)
 - [HackTricks](https://book.hacktricks.xyz/)
 - [PayloadsAllTheThings](https://github.com/swisskyrepo/PayloadsAllTheThings)
-
-### Bug Bounty Platforms
-- [HackerOne](https://hackerone.com)
-- [Bugcrowd](https://bugcrowd.com)
-- [Intigriti](https://intigriti.com)
-- [YesWeHack](https://yeswehack.com)
+- [PortSwigger Web Security Academy](https://portswigger.net/web-security)
 
 ---
 
-## 🔄 Updating
-
-```bash
-# Update tools
-./install-tools.sh  # Select option 8 to verify, then reinstall as needed
-
-# Update Nuclei templates
-nuclei -update-templates
-```
-
----
-
-## 📄 License
+## ?????? License
 
 This project is for educational purposes. Use responsibly and ethically.
 
 ---
 
-## 🤝 Contributing
-
-Feel free to add more scripts, tools, or checklists to enhance this toolkit.
-
----
-
-**Happy (Ethical) Hacking! 🎯**
+**Happy (Ethical) Hacking! ????**
